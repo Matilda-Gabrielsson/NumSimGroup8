@@ -5,3 +5,6 @@ import matplotlib.pyplot as plt
 # hejhej
 
 # funkar det nu
+
+
+tspan = [0, 10]
