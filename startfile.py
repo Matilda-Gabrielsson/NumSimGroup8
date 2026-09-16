@@ -15,14 +15,21 @@ def mass(t):
 
 
 def raketbana(t, y):
+    vx = y[2]
+    vy = y[3]
+
+    u = np.array([
+        km * np.cos(theta(t)),
+        km * np.sin(theta(t))
+    ])
+
+    v = np.array([vx, vy])
+    v_norm = np.linalg.norm(v)
+    
     return 0
 
 km = 700
 
-u = np.array([
-    km * np.cos(theta(t)),
-    km * np.sin(theta(t))
-])
 
 tspan = [0, 10]
 
