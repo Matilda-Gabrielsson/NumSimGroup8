@@ -21,17 +21,15 @@ v0 = [0]
 
 m0 = [8, -0.4]
 
-y0 = [(0,0)]
-
 t_eval= [0, 10, 200]
 tspan = [0, 10]
 
-sol = solve_ivp(ode_Y, tspan, y0,  t_eval=t_eval)
+# sol = solve_ivp(ode_Y, tspan, y0,  t_eval=t_eval)
 
-plt.plot(sol.t, sol.y[0])
-plt.xlabel("t")
-plt.ylabel("m(t)a(t)")
-plt.show()
+# plt.plot(sol.t, sol.y[0])
+# plt.xlabel("t")
+# plt.ylabel("m(t)a(t)")
+# plt.show()
 
 
 # hejhej
@@ -65,8 +63,13 @@ km = 700
 
 
 tspan = [0, 10]
+y0 = [0, 0, 0, 0]
+t_punkter=[0, 10, 200]
 
 target_x = 80
 target_y = 60
+sol = solve_ivp(raketbana, tspan, y0, t_eval=t_punkter)
 plt.plot(target_x, target_y, 'o')
+plt.xlabel("t")
+plt.ylabel("m(t)a(t)")
 plt.show()
