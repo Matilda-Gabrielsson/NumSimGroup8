@@ -11,18 +11,20 @@ import matplotlib.pyplot as plt
 # u(t)= (ux(t), uy(t)) = (700*cos(-pi/2), 700*sin(-pi/2))
 
 
-def ode_Y(t, y):
-    yder=np.zeros(1)
-    yder[0]= y[1]
-    yder[1]=-0.4
-    return yder
+# def ode_Y(t, y):
+#     yder=np.zeros(1)
+#     yder[0]= y[1]
+#     yder[1]=-0.4
+#     return yder
 
-v0 = [0]
+# v0 = [0]
 
-m0 = [8, -0.4]
+# m0 = [8, -0.4]
 
-t_eval= [0, 10, 200]
-tspan = [0, 10]
+# y0 = [(0,0)]
+
+# t_eval= [0, 10, 200]
+# tspan = [0, 10]
 
 # sol = solve_ivp(ode_Y, tspan, y0,  t_eval=t_eval)
 
@@ -33,9 +35,12 @@ tspan = [0, 10]
 
 
 # hejhej
+g = np.array([0, -9.82])
+c = 0.05
+km = 700
 
 def theta(t):
-    return 1
+    return np.pi/2
 
 def mass(t):
     if t <= 10:
@@ -44,10 +49,20 @@ def mass(t):
         mass = 4
     return mass
 
+def massa_derivata(t):
+    if t < 10:
+        return -0.4
+    else:
+        return 0
+    
+def raketbana(t, Y):
+    x = Y[0]
+    y = Y[1]
+    vx = Y[2]
+    vy = Y[3]
 
-def raketbana(t, y):
-    vx = y[2]
-    vy = y[3]
+    m = mass(t)
+    m_der = massa_derivata(t)
 
     u = np.array([
         km * np.cos(theta(t)),
@@ -57,19 +72,26 @@ def raketbana(t, y):
     v = np.array([vx, vy])
     v_norm = np.linalg.norm(v)
     
-    return 0
+    luft = c * v_norm * v
+    
+    F = m * g - luft
+    a = F/m + m_der/m * u
 
-km = 700
+    ax = a[0]
+    ay = a[1]
+
+    return [vx, vy, ax, ay]
 
 
-tspan = [0, 10]
 y0 = [0, 0, 0, 0]
-t_punkter=[0, 10, 200]
+
+t_span = [0, 10]
+
+sol = solve_ivp( raketbana, t_span, y0)
 
 target_x = 80
 target_y = 60
 sol = solve_ivp(raketbana, tspan, y0, t_eval=t_punkter)
 plt.plot(target_x, target_y, 'o')
-plt.xlabel("t")
-plt.ylabel("m(t)a(t)")
+plt.plot(sol.t, sol.y[0], 'o-g')
 plt.show()
