@@ -38,16 +38,15 @@ import matplotlib.pyplot as plt
 g = np.array([0, -9.82])
 c = 0.05
 km = 700
-
-def theta(t):
-    return np.pi/2
-
-def mass(t):
+target_x = 80
+target_y = 60
+    
+def massa(t):
     if t <= 10:
-        mass = 8 - 0.4 * t
+        massa = 8 - 0.4 * t
     else:
-        mass = 4
-    return mass
+        massa = 4
+    return massa
 
 def massa_derivata(t):
     if t < 10:
@@ -55,18 +54,27 @@ def massa_derivata(t):
     else:
         return 0
     
+def styrning(x, y):
+    theta = np.arctan2((target_y-y),(target_x-x))
+    return theta
+
 def raketbana(t, Y):
     x = Y[0]
     y = Y[1]
     vx = Y[2]
     vy = Y[3]
 
-    m = mass(t)
+    m = massa(t)
     m_der = massa_derivata(t)
 
+    if y < 20:
+        theta = np.pi/2
+    else:
+        theta = styrning(x,y)
+
     u = np.array([
-        km * np.cos(theta(t)),
-        km * np.sin(theta(t))
+        km * np.cos(theta),
+        km * np.sin(theta)
     ])
 
     v = np.array([vx, vy])
@@ -75,22 +83,32 @@ def raketbana(t, Y):
     luft = c * v_norm * v
     
     F = m * g - luft
-    a = F/m + m_der/m * u
+    a = F/m - m_der/m * u
 
     ax = a[0]
     ay = a[1]
 
     return [vx, vy, ax, ay]
 
+def stoppa(t, Y):
+    x = Y[0]
+    y = Y[1]
+
+    avstand = np.sqrt((x - target_x)**2 + (y - target_y)**2)
+
+    return avstand - 3
+
+stoppa.terminal = True
+stoppa.direction = -1
 
 y0 = [0, 0, 0, 0]
 
 t_span = [0, 10]
+t_eval= np.linspace(0, 10, 200)
 
-sol = solve_ivp( raketbana, t_span, y0)
+sol = solve_ivp( raketbana, t_span, y0, t_eval = t_eval, events=stoppa)
 
-target_x = 80
-target_y = 60
-plt.plot(target_x, target_y, 'o')
-plt.plot(sol.t, sol.y[0], 'o-g')
+plt.plot(target_x, target_y, marker='*', markersize=15, color = 'orange')
+plt.plot(sol.y[0], sol.y[1], 'm')
+plt.plot(sol.y[0][-1], sol.y[1][-1], marker='^', markersize=8, color = 'm')
 plt.show()
