@@ -106,7 +106,7 @@ y0 = [0, 0, 0, 0]
 t_span = [0, 10]
 t_eval= np.linspace(0, 10, 200)
 
-sol = solve_ivp( raketbana, t_span, y0, t_eval = t_eval, events=stoppa)
+sol = solve_ivp(raketbana, t_span, y0, t_eval = t_eval, events=stoppa)
 
 plt.plot(target_x, target_y, marker='*', markersize=15, color = 'orange')
 plt.plot(sol.y[0], sol.y[1], 'm')
