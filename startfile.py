@@ -88,7 +88,29 @@ def raketbana(t, Y):
     ax = a[0]
     ay = a[1]
 
-    return [vx, vy, ax, ay]
+    return np.array([vx, vy, ax, ay])
+
+
+def solver(f, t0, y0, dt):
+    interval = round((t0[1]-t0[0])/dt)
+    tvec = np.linspace(t0[0], t0[1], interval+1)
+
+    yder = np.zeros((len(y0), len(tvec)))
+
+    i = 0
+
+    yder[:,i] = y0
+
+    for t in tvec[0:len(tvec)-1]:
+        k1 = f(t, yder[:,i])
+        k2 = f(t + dt/2, yder[:,i] + (dt/2)*k1)
+        k3 = f(t + dt, yder[:,i] - dt*k1 + 2*dt*k2)
+        k =  (k1 + 4*k2 + k3)/6
+        yder[:,i + 1] = yder[:,i] + dt*k
+        i+=1
+
+    return tvec, yder
+
 
 def stoppa(t, Y):
     x = Y[0]
@@ -98,17 +120,28 @@ def stoppa(t, Y):
 
     return avstand - 3
 
+
 stoppa.terminal = True
 stoppa.direction = -1
 
-y0 = [0, 0, 0, 0]
+y0 = np.array([0, 0, 0, 0])
 
 t_span = [0, 10]
 t_eval= np.linspace(0, 10, 200)
 
-sol = solve_ivp(raketbana, t_span, y0, t_eval = t_eval, events=stoppa)
-
+#With own solver
+t, y = solver(raketbana, t_span, y0, 0.1)
+plt.plot(y[0], y[1],'m')
 plt.plot(target_x, target_y, marker='*', markersize=15, color = 'orange')
-plt.plot(sol.y[0], sol.y[1], 'm')
-plt.plot(sol.y[0][-1], sol.y[1][-1], marker='^', markersize=8, color = 'm')
+plt.plot(y[0][-1], y[1][-1], marker='^', markersize=8, color = 'm')
+plt.xlabel('x')
+plt.ylabel('y')
+plt.axis('equal')
 plt.show()
+
+#With solve_ivp
+# sol = solve_ivp(raketbana, t_span, y0, t_eval = t_eval, events=stoppa)
+# plt.plot(target_x, target_y, marker='*', markersize=15, color = 'orange')
+# plt.plot(sol.y[0], sol.y[1], 'm')
+# plt.plot(sol.y[0][-1], sol.y[1][-1], marker='^', markersize=8, color = 'm')
+# plt.show()
