@@ -2,39 +2,6 @@ import numpy as np
 from scipy.integrate import solve_ivp
 import matplotlib.pyplot as plt
 
-# Raketens bana kan beräknas med Newtons rörelselagar i följande differentialekvation
-
-# m(t)a(t) = F + m'(t)u(t)
-
-# F = m(t)g − 0.05||v(t)||v(t)
-
-# u(t)= (ux(t), uy(t)) = (700*cos(-pi/2), 700*sin(-pi/2))
-
-
-# def ode_Y(t, y):
-#     yder=np.zeros(1)
-#     yder[0]= y[1]
-#     yder[1]=-0.4
-#     return yder
-
-# v0 = [0]
-
-# m0 = [8, -0.4]
-
-# y0 = [(0,0)]
-
-# t_eval= [0, 10, 200]
-# tspan = [0, 10]
-
-# sol = solve_ivp(ode_Y, tspan, y0,  t_eval=t_eval)
-
-# plt.plot(sol.t, sol.y[0])
-# plt.xlabel("t")
-# plt.ylabel("m(t)a(t)")
-# plt.show()
-
-
-# hejhej
 g = np.array([0, -9.82])
 c = 0.05
 km = 700
@@ -58,6 +25,9 @@ def styrning(x, y):
     theta = np.arctan2((target_y-y),(target_x-x))
     return theta
 
+def styrning_optimerad():
+    return 6 * np.pi / 180
+
 def raketbana(t, Y):
     x = Y[0]
     y = Y[1]
@@ -70,11 +40,12 @@ def raketbana(t, Y):
     if y < 20:
         theta = np.pi/2
     else:
-        theta = styrning(x,y)
+        # theta = styrning(x,y)
+        theta = styrning_optimerad()
 
     u = np.array([
-        km * np.cos(theta),
-        km * np.sin(theta)
+        km * np.cos(theta),  # - 3*vx,
+        km * np.sin(theta) #- 6*vy
     ])
 
     v = np.array([vx, vy])
@@ -118,7 +89,7 @@ def stoppa(t, Y):
 
     avstand = np.sqrt((x - target_x)**2 + (y - target_y)**2)
 
-    return avstand - 3
+    return avstand - 2
 
 
 stoppa.terminal = True
@@ -130,17 +101,16 @@ t_span = [0, 10]
 t_eval= np.linspace(0, 10, 200)
 
 #With own solver
-t, y = solver(raketbana, t_span, y0, 0.1)
-plt.plot(y[0], y[1],'m')
-plt.plot(target_x, target_y, marker='*', markersize=15, color = 'orange')
-plt.plot(y[0][-1], y[1][-1], marker='^', markersize=8, color = 'm')
-plt.xlabel('x')
-plt.ylabel('y')
-plt.axis('equal')
-plt.show()
+# t, y = solver(raketbana, t_span, y0, 0.01)
+# plt.plot(y[0], y[1],'m')
+# plt.plot(target_x, target_y, marker='*', markersize=15, color = 'orange')
+# plt.plot(y[0][-1], y[1][-1], marker='^', markersize=8, color = 'm')
+# plt.xlabel('x')
+# plt.ylabel('y')
+# plt.show()
 
-#With solve_ivp
-# sol = solve_ivp(raketbana, t_span, y0, t_eval = t_eval, events=stoppa)
+# With solve_ivp
+# sol = solve_ivp(raketbana, t_span, y0, t_eval = t_eval, events=stoppa, max_step = 0.05)
 # plt.plot(target_x, target_y, marker='*', markersize=15, color = 'orange')
 # plt.plot(sol.y[0], sol.y[1], 'm')
 # plt.plot(sol.y[0][-1], sol.y[1][-1], marker='^', markersize=8, color = 'm')
