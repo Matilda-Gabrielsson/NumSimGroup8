@@ -24,7 +24,7 @@ def massa_derivata(t):
 def styrning_test(alpha):
     return alpha * np.pi / 180
 
-#Ungefär motsvarande solve_ivp-events. Funtkion som används för att se om vi är max 2 l.e. från målet.
+#Ungefär motsvarande solve_ivp-events. Funtkion som används för att se om vi är max 1 l.e. från målet.
 def check_hit(x, y):
     avstand = np.sqrt((x - target_x)**2 + (y - target_y)**2)
     return avstand <= 1
@@ -61,6 +61,7 @@ def raketbana(t, Y, alpha):
 
     return np.array([vx, vy, ax, ay])
 
+#Runge-Kutta 3 - lösare
 def solver(f, t0, y0, dt, alpha):
     interval = round((t0[1]-t0[0])/dt)
     tvec = np.linspace(t0[0], t0[1], interval+1)
@@ -98,23 +99,22 @@ dt = 0.01
 
 alpha = 90
 
-#Loop för att iterera över alpha och hitta den (första) optimala vinkeln för att träffa målet. 
+#Loop för att iterera över alpha fr o m 90 grader och hitta den (första) optimala vinkeln för att träffa målet. 
 while alpha >= 0:
     t, y = solver(raketbana, t_span, y0, dt, alpha)
     
-    slutpos = y[-1, 0]
     x_slut = y[0, -1]
     y_slut = y[1, -1]
-    avstand = np.sqrt((x_slut - target_x)**2 + (y_slut - target_y)**2)
 
     if check_hit(x_slut, y_slut):
         break
 
     alpha -= 0.5
 
-if alpha > -1:
+if alpha > -0.5:
     print(f"{alpha} är den rätta bästa vinkeln!!!")
-    t, y = solver(raketbana, t_span, y0, 0.1, alpha)
+    
+    t, y = solver(raketbana, t_span, y0, dt, alpha)
     plt.plot(y[0], y[1],'m')
     plt.plot(target_x, target_y, marker='*', markersize=15, color = 'orange')
     plt.plot(y[0][-1], y[1][-1], marker='^', markersize=8, color = 'm')

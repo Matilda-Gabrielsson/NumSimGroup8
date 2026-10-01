@@ -27,6 +27,7 @@ def styrning(x, y):
     return theta
 
 #Styrningsfunktion som har en konstant, optimal vinkel för att skicka raketen mot målet
+#Vinkeln funnen mha experiment som finns i testfile.py
 def styrning_optimerad():
     return 5.5 * np.pi / 180
 
@@ -85,14 +86,14 @@ def solver(f, t0, y0, dt):
     return tvec, yder
 
 #Funktion som solve_ivp använder för att stoppa beräkningen vid en viss händelse. 
-# I vårt fall är händelsen att raketen är inom 2 l.e. från målet
+# I vårt fall är händelsen att raketen är inom 1 l.e. från målet
 def stoppa(t, Y):
     x = Y[0]
     y = Y[1]
 
     avstand = np.sqrt((x - target_x)**2 + (y - target_y)**2)
 
-    return avstand - 1 #skapar en toleransradie på 2 l.e. från målet 
+    return avstand - 1 #skapar en toleransradie på 1 l.e. från målet 
 
 
 stoppa.terminal = True
@@ -101,20 +102,18 @@ stoppa.direction = -1
 y0 = np.array([0, 0, 0, 0])
 
 t_span = [0, 10]
-t_eval= np.linspace(0, 10, 200)
 
 #With own solver
 # t, y = solver(raketbana, t_span, y0, 0.01)
 # plt.plot(y[0], y[1],'m')
 # plt.plot(target_x, target_y, marker='*', markersize=15, color = 'orange')
 # plt.plot(y[0][-1], y[1][-1], marker='^', markersize=8, color = 'm')
-# plt.xlabel('x')
-# plt.ylabel('y')
 # plt.show()
 
 # With solve_ivp
-sol = solve_ivp(raketbana, t_span, y0, t_eval = t_eval, events=stoppa, max_step = 0.05)
+sol = solve_ivp(raketbana, t_span, y0, events=stoppa, max_step = 0.05)
 plt.plot(target_x, target_y, marker='*', markersize=15, color = 'orange')
 plt.plot(sol.y[0], sol.y[1], 'm')
-plt.plot(sol.y[0][-1], sol.y[1][-1], marker='^', markersize=8, color = 'm')
+hit = sol.y_events[0][0]   # tillståndet [x, y, vx, vy] exakt när eventet utlöstes, OBS indexerror vid miss
+plt.plot(hit[0], hit[1], marker='^', markersize=8, color='m')
 plt.show()
