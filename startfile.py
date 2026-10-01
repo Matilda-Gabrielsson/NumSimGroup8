@@ -114,7 +114,7 @@ t_span = [0, 10]
 sol = solve_ivp(raketbana, t_span, y0, events=stoppa, max_step = 0.05)
 plt.plot(target_x, target_y, marker='*', markersize=15, color = 'orange')
 plt.plot(sol.y[0], sol.y[1], 'm')
-if sol.status == 1:
+if sol.status == 1: #Om solve_ivp-event har hittats 
     hit = sol.y_events[0][0]   # tillståndet [x, y, vx, vy] exakt när eventet utlöstes
     plt.plot(hit[0], hit[1], marker='^', markersize=8, color='m')
 else:
