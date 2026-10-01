@@ -100,7 +100,7 @@ dt = 0.01
 
 alpha = 90
 
-while alpha >= -90:
+while alpha >= 0:
     t, y = solver(raketbana, t_span, y0, dt, alpha)
     
     slutpos = y[-1, 0]
