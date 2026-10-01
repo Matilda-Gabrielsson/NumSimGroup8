@@ -111,7 +111,7 @@ while alpha >= -90:
     if check_hit(x_slut, y_slut):
         break
 
-    alpha -= 1
+    alpha -= 0.5
 
 
 print(f"{alpha} är det rätta bästa talet!!!")

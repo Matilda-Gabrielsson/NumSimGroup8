@@ -26,7 +26,7 @@ def styrning(x, y):
     return theta
 
 def styrning_optimerad():
-    return 6 * np.pi / 180
+    return 6.5 * np.pi / 180
 
 def raketbana(t, Y):
     x = Y[0]
@@ -44,8 +44,8 @@ def raketbana(t, Y):
         theta = styrning_optimerad()
 
     u = np.array([
-        km * np.cos(theta),  # - 3*vx,
-        km * np.sin(theta) #- 6*vy
+        km * np.cos(theta),
+        km * np.sin(theta)
     ])
 
     v = np.array([vx, vy])
@@ -101,17 +101,17 @@ t_span = [0, 10]
 t_eval= np.linspace(0, 10, 200)
 
 #With own solver
-# t, y = solver(raketbana, t_span, y0, 0.01)
-# plt.plot(y[0], y[1],'m')
-# plt.plot(target_x, target_y, marker='*', markersize=15, color = 'orange')
-# plt.plot(y[0][-1], y[1][-1], marker='^', markersize=8, color = 'm')
-# plt.xlabel('x')
-# plt.ylabel('y')
-# plt.show()
+t, y = solver(raketbana, t_span, y0, 0.01)
+plt.plot(y[0], y[1],'m')
+plt.plot(target_x, target_y, marker='*', markersize=15, color = 'orange')
+plt.plot(y[0][-1], y[1][-1], marker='^', markersize=8, color = 'm')
+plt.xlabel('x')
+plt.ylabel('y')
+plt.show()
 
 # With solve_ivp
-# sol = solve_ivp(raketbana, t_span, y0, t_eval = t_eval, events=stoppa, max_step = 0.05)
-# plt.plot(target_x, target_y, marker='*', markersize=15, color = 'orange')
-# plt.plot(sol.y[0], sol.y[1], 'm')
-# plt.plot(sol.y[0][-1], sol.y[1][-1], marker='^', markersize=8, color = 'm')
-# plt.show()
+sol = solve_ivp(raketbana, t_span, y0, t_eval = t_eval, events=stoppa, max_step = 0.05)
+plt.plot(target_x, target_y, marker='*', markersize=15, color = 'orange')
+plt.plot(sol.y[0], sol.y[1], 'm')
+plt.plot(sol.y[0][-1], sol.y[1][-1], marker='^', markersize=8, color = 'm')
+plt.show()
