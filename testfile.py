@@ -21,16 +21,13 @@ def massa_derivata(t):
     else:
         return 0
 
-def styrning(x, y):
-    theta = np.arctan2((target_y-y),(target_x-x))
-    return theta
-
 def styrning_test(alpha):
     return alpha * np.pi / 180
 
+#Ungefär motsvarande solve_ivp-events. Funtkion som används för att se om vi är max 2 l.e. från målet.
 def check_hit(x, y):
     avstand = np.sqrt((x - target_x)**2 + (y - target_y)**2)
-    return avstand <= 2
+    return avstand <= 1
 
 def raketbana(t, Y, alpha):
     x = Y[0]
@@ -84,11 +81,12 @@ def solver(f, t0, y0, dt, alpha):
         x_nuvarande = yder[0, i]
         y_nuvarande = yder[1, i]
 
+        #Om vi har träffat avslutar vi beräkningen
         if check_hit(x_nuvarande, y_nuvarande):
             break
         
         i+=1
-
+    #Vi returnerar inte hela tvec om inte hela har fyllts. Detta för att indexet -1 ska avse slutpositionen oavsett vad.
     return tvec[:i+1], yder[:, :i+1]
 
 y0 = np.array([0, 0, 0, 0])
@@ -100,6 +98,7 @@ dt = 0.01
 
 alpha = 90
 
+#Loop för att iterera över alpha och hitta den (första) optimala vinkeln för att träffa målet. 
 while alpha >= 0:
     t, y = solver(raketbana, t_span, y0, dt, alpha)
     
@@ -113,13 +112,14 @@ while alpha >= 0:
 
     alpha -= 0.5
 
-
-print(f"{alpha} är det rätta bästa talet!!!")
-
-t, y = solver(raketbana, t_span, y0, 0.1, alpha)
-plt.plot(y[0], y[1],'m')
-plt.plot(target_x, target_y, marker='*', markersize=15, color = 'orange')
-plt.plot(y[0][-1], y[1][-1], marker='^', markersize=8, color = 'm')
-plt.xlabel('x')
-plt.ylabel('y')
-plt.show()
+if alpha > -1:
+    print(f"{alpha} är den rätta bästa vinkeln!!!")
+    t, y = solver(raketbana, t_span, y0, 0.1, alpha)
+    plt.plot(y[0], y[1],'m')
+    plt.plot(target_x, target_y, marker='*', markersize=15, color = 'orange')
+    plt.plot(y[0][-1], y[1][-1], marker='^', markersize=8, color = 'm')
+    plt.xlabel('x')
+    plt.ylabel('y')
+    plt.show()
+else:
+    print("Ingen träff!")

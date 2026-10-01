@@ -7,7 +7,7 @@ c = 0.05
 km = 700
 target_x = 80
 target_y = 60
-    
+
 def massa(t):
     if t <= 10:
         massa = 8 - 0.4 * t
@@ -20,13 +20,15 @@ def massa_derivata(t):
         return -0.4
     else:
         return 0
-    
+
+#Styrningsfunktion som i varje steg anpassar styrvinkeln baserat på raketens nuvarande avstånd i x- och y-led till målet
 def styrning(x, y):
     theta = np.arctan2((target_y-y),(target_x-x))
     return theta
 
+#Styrningsfunktion som har en konstant, optimal vinkel för att skicka raketen mot målet
 def styrning_optimerad():
-    return 6.5 * np.pi / 180
+    return 5.5 * np.pi / 180
 
 def raketbana(t, Y):
     x = Y[0]
@@ -61,7 +63,7 @@ def raketbana(t, Y):
 
     return np.array([vx, vy, ax, ay])
 
-
+#Runge-Kutta 3 - lösare
 def solver(f, t0, y0, dt):
     interval = round((t0[1]-t0[0])/dt)
     tvec = np.linspace(t0[0], t0[1], interval+1)
@@ -82,14 +84,15 @@ def solver(f, t0, y0, dt):
 
     return tvec, yder
 
-
+#Funktion som solve_ivp använder för att stoppa beräkningen vid en viss händelse. 
+# I vårt fall är händelsen att raketen är inom 2 l.e. från målet
 def stoppa(t, Y):
     x = Y[0]
     y = Y[1]
 
     avstand = np.sqrt((x - target_x)**2 + (y - target_y)**2)
 
-    return avstand - 2
+    return avstand - 1 #skapar en toleransradie på 2 l.e. från målet 
 
 
 stoppa.terminal = True
@@ -101,13 +104,13 @@ t_span = [0, 10]
 t_eval= np.linspace(0, 10, 200)
 
 #With own solver
-t, y = solver(raketbana, t_span, y0, 0.01)
-plt.plot(y[0], y[1],'m')
-plt.plot(target_x, target_y, marker='*', markersize=15, color = 'orange')
-plt.plot(y[0][-1], y[1][-1], marker='^', markersize=8, color = 'm')
-plt.xlabel('x')
-plt.ylabel('y')
-plt.show()
+# t, y = solver(raketbana, t_span, y0, 0.01)
+# plt.plot(y[0], y[1],'m')
+# plt.plot(target_x, target_y, marker='*', markersize=15, color = 'orange')
+# plt.plot(y[0][-1], y[1][-1], marker='^', markersize=8, color = 'm')
+# plt.xlabel('x')
+# plt.ylabel('y')
+# plt.show()
 
 # With solve_ivp
 sol = solve_ivp(raketbana, t_span, y0, t_eval = t_eval, events=stoppa, max_step = 0.05)
