@@ -5,8 +5,8 @@ import matplotlib.pyplot as plt
 g = np.array([0, -9.82])
 c = 0.05
 km = 700
-target_x = 80
-target_y = 60
+target_x = -80
+target_y = -60
 
 def massa(t):
     if t <= 10:
@@ -38,7 +38,8 @@ def raketbana(t, Y, alpha):
     m = massa(t)
     m_der = massa_derivata(t)
 
-    if y < 20:
+# Raketen flyger uppåt 20 m, vilket är 1.2 s
+    if y < 20 and t < 1.2:
         theta = np.pi/2
     else:
         theta = styrning_test(alpha)
@@ -97,10 +98,10 @@ t_eval= np.linspace(0, 10, 200)
 
 dt = 0.01
 
-alpha = 90
+alpha = 180
 
-#Loop för att iterera över alpha fr o m 90 grader och hitta den (första) optimala vinkeln för att träffa målet. 
-while alpha >= 0:
+#Loop för att iterera över alpha och hitta den (första) optimala vinkeln för att träffa målet. 
+while alpha >= -180:
     t, y = solver(raketbana, t_span, y0, dt, alpha)
     
     x_slut = y[0, -1]
@@ -111,15 +112,14 @@ while alpha >= 0:
 
     alpha -= 0.5
 
-if alpha > -0.5:
-    print(f"{alpha} är den rätta bästa vinkeln!!!")
-    
-    t, y = solver(raketbana, t_span, y0, dt, alpha)
-    plt.plot(y[0], y[1],'m')
-    plt.plot(target_x, target_y, marker='*', markersize=15, color = 'orange')
-    plt.plot(y[0][-1], y[1][-1], marker='^', markersize=8, color = 'm')
-    plt.xlabel('x')
-    plt.ylabel('y')
-    plt.show()
-else:
-    print("Ingen träff!")
+print(f"{alpha} är den rätta bästa vinkeln!!!")
+
+t, y = solver(raketbana, t_span, y0, dt, alpha)
+plt.plot(y[0], y[1],'m')
+plt.plot(target_x, target_y, marker='*', markersize=15, color = 'orange')
+plt.plot(y[0][-1], y[1][-1], marker='^', markersize=8, color = 'm')
+plt.xlabel('x')
+plt.ylabel('y')
+plt.show()
+
+
