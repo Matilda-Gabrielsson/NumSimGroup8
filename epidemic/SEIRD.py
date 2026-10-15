@@ -1,8 +1,9 @@
 import numpy as np
-import random
+# import random
 import matplotlib.pyplot as plt
+from gillespie import SSA
 
-def stoch():
+def stochSEIRD():
     return np.array([
     [-1,  1,  0,  0,  0],  
     [ 0, -1,  1,  0,  0], 
@@ -11,7 +12,7 @@ def stoch():
 ])
 
 
-def prop(X, coeff):
+def propSEIRD(X, coeff):
     S, E, I, R, D = X
     beta, alpha, gamma, mu, N = coeff
 
@@ -22,49 +23,18 @@ def prop(X, coeff):
 
     return np.array([p1, p2, p3, p4])
 
-N = 1000
 beta = 0.3
 alpha = 1/5
 gamma = 1/7
 mu = 0.02
-
-X0 = np.array([995, 0, 5, 0, 0])
-t_span = [0, 120]
-
+N = 1000
 coeff = [beta, alpha, gamma, mu, N]
 
-def SSA(prop,stoch,X0,tspan,coeff):
-    tvec=np.zeros(1)
-    tvec[0]=tspan[0]
-    Xarr=np.zeros([1,len(X0)])
-    Xarr[0,:]=X0
-    t=tvec[0]
-    X=X0
-    sMat=stoch()
-    while t<tspan[1]:
-        re=prop(X,coeff)
-        a0=sum(re)
-        if a0>1e-10:
-            # Bestäm reaktionstid
-            r1=random.random()
-            tau=-np.log(r1)/a0
-            t+=tau
-            tvec=np.append(tvec,t)
-            # Bestäm vilken reaktion
-            r2=random.random()
-            cre=np.cumsum(re)
-            cre=cre/cre[-1]
-            r=0
-            while cre[r]<r2:
-                r+=1
-            X=X+sMat[r,:]
-            Xarr=np.vstack([Xarr,X])
-        else: # Alla reaktionshastigheter 0
-            print('Simuleringen avslutad vid t=', t)
-            return tvec, Xarr
-    return tvec, Xarr
+X0 = np.array([995, 0, 5, 0, 0])
 
-t, X = SSA(prop, stoch, X0, t_span, coeff)
+t_span = [0, 120]
+
+t, X = SSA(propSEIRD, stochSEIRD, X0, t_span, coeff)
 
 plt.step(t, X[:, 0], where="post", label="S")
 plt.step(t, X[:, 1], where="post", label="E")
