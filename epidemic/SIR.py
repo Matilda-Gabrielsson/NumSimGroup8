@@ -1,8 +1,6 @@
-
-from gillespie import SSA
-from scipy.integrate import solve_ivp
 import numpy as np
 import matplotlib.pyplot as plt
+from gillespie import SSA
 
 def stochSIR():
     M = np.array([[-1, 1, 0], \
