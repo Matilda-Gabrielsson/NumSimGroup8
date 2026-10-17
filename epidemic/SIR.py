@@ -28,19 +28,19 @@ X0 = np.array([S0, I0, R0])
 t0 = 0
 t_end = 120
 t_span = (t0, t_end)
+if __name__ == "__main__":
+    t, X = SSA(propSIR, stochSIR, X0, t_span, coeff)
 
-t, X = SSA(propSIR, stochSIR, X0, t_span, coeff)
+    plt.figure(1)
+    plt.plot(t, X[:,0],'b-', label="S")
 
-plt.figure(1)
-plt.plot(t, X[:,0],'b-', label="S")
+    plt.plot(t, X[:,1],'r-', label="I")
 
-plt.plot(t, X[:,1],'r-', label="I")
+    plt.plot(t, X[:,2],'g-', label="R")
 
-plt.plot(t, X[:,2],'g-', label="R")
-
-# ax1 = plt.gca()
-# xmin, xmax, ymin, ymax = ax1.axis()
-# ax1.set(xlim=(0,xmax), ylim=(0, ymax))
-plt.title("SIR, stochastic")
-plt.legend()
-plt.show()
+    # ax1 = plt.gca()
+    # xmin, xmax, ymin, ymax = ax1.axis()
+    # ax1.set(xlim=(0,xmax), ylim=(0, ymax))
+    plt.title("SIR, stochastic")
+    plt.legend()
+    plt.show()
