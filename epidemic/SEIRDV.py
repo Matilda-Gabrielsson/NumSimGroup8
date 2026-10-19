@@ -39,18 +39,19 @@ X0 = np.array([995, 0, 5, 0, 0, 0])
 
 t_span = [0, 120]
 
-t, X = SSA(propSEIRDV, stochSEIRDV, X0, t_span, coeff)
+if __name__ == "__main__":
+    t, X = SSA(propSEIRDV, stochSEIRDV, X0, t_span, coeff)
 
-plt.step(t, X[:, 0], where="post", label="S")
-plt.step(t, X[:, 1], where="post", label="E")
-plt.step(t, X[:, 2], where="post", label="I")
-plt.step(t, X[:, 3], where="post", label="R")
-plt.step(t, X[:, 4], where="post", label="D")
-plt.step(t, X[:, 5], where="post", label="V")
+    plt.step(t, X[:, 0], where="post", label="S")
+    plt.step(t, X[:, 1], where="post", label="E")
+    plt.step(t, X[:, 2], where="post", label="I")
+    plt.step(t, X[:, 3], where="post", label="R")
+    plt.step(t, X[:, 4], where="post", label="D")
+    plt.step(t, X[:, 5], where="post", label="V")
 
-plt.xlabel("Tid (dagar)")
-plt.ylabel("Antal personer")
-plt.title("SEIRDV-modell")
-plt.legend()
-plt.grid()
-plt.show()
+    plt.xlabel("Tid (dagar)")
+    plt.ylabel("Antal personer")
+    plt.title("SEIRDV-modell")
+    plt.legend()
+    plt.grid()
+    plt.show()
