@@ -19,16 +19,17 @@ S0 = 995
 I0 = 5
 R0 = 0
 
-y0 = [S0, I0, R0]
+Y0 = [S0, I0, R0]
 t_span = [0, 120]
-sol = solve_ivp(SIR, t_span, [995, 5, 0], t_eval=np.linspace(*t_span, 500))
+if __name__ == "__main__":
+    sol = solve_ivp(SIR, t_span, [995, 5, 0], t_eval=np.linspace(*t_span, 500))
 
-plt.plot(sol.t, sol.y[0], label="Mottagliga (S)")
-plt.plot(sol.t, sol.y[1], label="Infekterade (I)")
-plt.plot(sol.t, sol.y[2], label="Tillfrisknade (R)")
+    plt.plot(sol.t, sol.y[0], label="Mottagliga (S)")
+    plt.plot(sol.t, sol.y[1], label="Infekterade (I)")
+    plt.plot(sol.t, sol.y[2], label="Tillfrisknade (R)")
 
-plt.xlabel("Tid (dagar)")
-plt.ylabel("Antal personer")
-plt.title("SIR-modellen")
-plt.legend()
-plt.show()
+    plt.xlabel("Tid (dagar)")
+    plt.ylabel("Antal personer")
+    plt.title("SIR-modellen")
+    plt.legend()
+    plt.show()
